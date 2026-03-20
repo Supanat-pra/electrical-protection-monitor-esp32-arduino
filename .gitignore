@@ -1,0 +1,12 @@
+# PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+
+# IDE (VS Code / CLion)
+.vscode/
+.idea/
+
+#
+secret.ini
+include/credentials.h
