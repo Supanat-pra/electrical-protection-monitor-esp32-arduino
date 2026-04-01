@@ -166,11 +166,12 @@ void publishTelemetry (float load, float temp) {
   if(!mqtt.connected()) return;
 
   char payload[192];
-  snprintf(payload, sizeof(payload), "{ \"load_pct\": %.1f, \"temp_c\": %.1f, \"state\": \"%s\", \"relay\": \"%s\" }",
+  snprintf(payload, sizeof(payload), "{ \"ts\": %lu, \"load_pct\": %.1f, \"temp_c\": %.1f, \"state\": \"%s\", \"relay\": \"%s\" }",
+    millis() / 1000,
     load,
     isnan(temp) ? 0.0 : temp,
     stateToString(currentState),
-    (currentState == TRIPPED || currentState == LOCKOUT) ? "TRIPPED(OFF)" : "NORMAL(ON)");
+    (currentState == TRIPPED || currentState == LOCKOUT) ? 0 : 1);
 
     mqtt.publish(TOPIC_TELEMETRY,payload);
     Serial.printf("Telemetry: %s\n", payload);
@@ -181,9 +182,10 @@ void publishAlert() {
 
   char payload[192];
   snprintf(payload, sizeof(payload),
-    "{ \"alert\": true, \"state\": \"%s\", \"previous_state\": \"%s\" }",
-    stateToString(currentState),
-    stateToString(previousState)
+    "{ \"ts\": %lu, \"event\": \"STATE CHANGE\", \"from\": \"%s\", \"to\": \"%s\" }",
+    millis() / 1000,
+    stateToString(previousState),
+    stateToString(currentState)
   );
 
   mqtt.publish(TOPIC_ALERT, payload);
@@ -249,11 +251,12 @@ void reconnectMQTT() {
 
 void printStatus(float load, float temp) {
   Serial.printf(
-    "{ \"load_pct\": %.1f, \"temp_c\": %.1f, \"state\": \"%s\", \"relay\": \"%s\" }\n",
+    "{ \"ts\": %lu,\"load_pct\": %.1f, \"temp_c\": %.1f, \"state\": \"%s\", \"relay\": \"%s\" }\n",
+    millis() / 1000,
     load,
-    temp,
+    isnan(temp) ? 0.0 : temp,
     stateToString(currentState),
-    (currentState == TRIPPED || currentState == LOCKOUT) ? "TRIPPED(OFF)" : "NORMAL(ON)"
+    (currentState == TRIPPED || currentState == LOCKOUT) ? 0 : 1
   );
 }
 
