@@ -129,11 +129,11 @@ The system implements a **4-state protection state machine** running entirely on
 
 ### Relay Behavior (De-energize to Trip)
 
-| System State      | Relay Coil   | NO Contact | Load                        |
-| ----------------- | ------------ | ---------- | --------------------------- |
-| NORMAL            | De-energized | Open       | Disconnected (safe at boot) |
-| WARNING           | De-energized | Open       | Disconnected                |
-| TRIPPED / LOCKOUT | Energized    | Closed     | Connected                   |
+| System State      | Relay Coil   | NO Contact | Load                |
+| ----------------- | ------------ | ---------- | ------------------- |
+| NORMAL            | Energized    | Closed     | Connected (Running) |
+| WARNING           | Energized    | Closed     | Connected (Running) |
+| TRIPPED / LOCKOUT | De-energized | Open       | Disconnected (Safe) |
 
 > **Design Note:** The relay uses **Energize-to-Normal** with NO contact — load is connected only when system is healthy and relay is actively energized. On power loss or ESP32 failure, relay de-energizes and load disconnects automatically.
 
